@@ -1,0 +1,86 @@
+<!--search.wxml-->
+
+<view class="page">
+    <view class="page__bd">
+        <view class="weui-search-bar">
+            <view class="weui-search-bar__form">
+                <view class="weui-search-bar__box">
+                    <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+                    <input type="text" class="weui-search-bar__input" placeholder="输入域名" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="add" />
+                    <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" bindtap="clearInput">
+                        <icon type="clear" size="14"></icon>
+                    </view>
+                </view>
+                <label class="weui-search-bar__label" hidden="{{inputShowed}}" bindtap="showInput">
+                    <icon class="weui-icon-search" type="search" size="14"></icon>
+                    <view class="weui-search-bar__text">输入域名</view>
+                </label>
+            </view>
+            <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" bindtap="search">搜索</view>
+        </view>
+    </view>
+
+
+<view wx:if="{{run}}">
+进度：<progress 
+    percent="{{percent}}"
+    show-info="true" 
+    stroke-width="5"
+    color="green"
+/>
+</view>
+
+<view wx:if="{{showMap}}">
+<map id="map" longitude="{{lng}}" latitude="{{lat}}" scale="4" controls="{{controls}}" bindcontroltap="controltap" markers="{{markers}}" bindmarkertap="markertap" polyline="{{polyline}}" bindregionchange="regionchange" show-location style="width: 100%; height: 300px;"></map>
+
+<button bindtap="nestHop">下一跳：{{router_table[hop].region}}</button>
+
+    <view class="page__hd">
+        <view class="page__title">路由表</view>
+    </view>
+    <view class="page__bd">
+        <view class="weui-cells weui-cells_after-title" wx:for="{{router_table}}" wx:for-index="id" wx:for-item="item">
+            <view class="weui-cell" data-alpha-id="{{id}}" bindtap="MapCenterChange">
+                <view class="weui-cell__bd">第{{id+1}}跳</view>
+                <view class="weui-cell__ft">{{item.IP}}({{item.region}})</view>
+            </view>
+        </view>
+    </view>
+</view>
+
+
+   <view class="page__hd">
+        <view class="page__title">关于Traceroute</view>
+    </view>
+    <view class="page__bd">
+        <view class="weui-article">
+          <view class="weui-article__section">
+          Traceroute是用来检测发出数据包的主机到目标主机之间所经过的网关数量的工具，它使用ICMP协议进行工作。
+          </view>
+            <view class="weui-article__section">
+                <view class="weui-article__section">
+                    <view class="weui-article__h3">1.1 ICMP协议</view>
+                    <view class="weui-article__p">
+                        ICMP是（Internet Control Message Protocol）Internet控制报文协议。它是TCP/IP协议族的一个子协议，用于在IP主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用。通过这些信息，计算机可以及时的发现网络存在的故障，进而对网络进行修复。此外，计算机中的Ping命令就是利用该协议来测试2个主机之间的可达性的。
+                    </view>
+                </view>
+                <view class="weui-article__section">
+                    <view class="weui-article__h3">1.2 Traceroute原理</view>
+                    <view class="weui-article__p">
+                        Traceroute程序的设计是利用ICMP及IP header的TTL（Time To Live）栏位（field）。首先，traceroute送出一个TTL是1的IP datagram（其实，每次送出的为3个40字节的包，包括源地址，目的地址和包发出的时间标签）到目的地，当路径上的第一个路由器（router）收到这个datagram时，它将TTL减1。此时，TTL变为0了，所以该路由器会将此datagram丢掉，并送回一个「ICMP time exceeded」消息（包括发IP包的源地址，IP包的所有内容及路由器的IP地址），traceroute 收到这个消息后，便知道这个路由器存在于这个路径上，接着traceroute 再送出另一个TTL是2 的datagram，发现第2 个路由器...... traceroute 每次将送出的datagram的TTL 加1来发现另一个路由器，这个重复的动作一直持续到某个datagram 抵达目的地。当datagram到达目的地后，该主机并不会送回ICMP time exceeded消息，因为它已是目的地了，那么traceroute如何得知目的地到达了呢？Traceroute在送出UDP datagrams到目的地时，它所选择送达的port number 是一个一般应用程序都不会用的号码（30000 以上），所以当此UDP datagram 到达目的地后该主机会送回一个「ICMP port unreachable」的消息，而当traceroute 收到这个消息时，便知道目的地已经到达了。所以traceroute 在Server端也是没有所谓的Daemon 程式。
+Traceroute提取发 ICMP TTL到期消息设备的IP地址并作域名解析。每次 ，Traceroute都打印出一系列数据,包括所经过的路由设备的域名及 IP地址,三个包每次来回所花时间。
+Traceroute 有一个固定的时间等待响应(ICMP TTL到期消息)。如果这个时间过了，它将打印出一系列的*号表明：在这个路径上，这个设备不能在给定的时间内发出ICMP TTL到期消息的响应。然后，Traceroute给TTL记数器加1，继续进行。
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+
+
+</view>
+
+
+
+
+
